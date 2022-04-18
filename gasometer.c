@@ -9,6 +9,7 @@ cc -o LDR LDR.c -lpigpio -lrt -lpthread
 #define PULSE_GPIO 21 /* GPIO 21 as interrupt input */
 
 uint32_t pulseCnt = 0;
+time_t last_t = 0;
 
 void healthCheck ( void )
 {
@@ -22,19 +23,23 @@ void alert(int pin, int level, uint32_t tick)
    {
       time_t now;
       time( &now );
-      struct tm tm_buf;
-      localtime_r(&now, &tm_buf);
-      FILE *fo = fopen("gasometerTimestamps.csv", "a");
-      fprintf( fo, "%ld,%02d.%02d.%04d_%02d:%02d:%02d\n",
-               now,
-               tm_buf.tm_mday,
-               tm_buf.tm_mon + 1,
-               tm_buf.tm_year + 1900,
-               tm_buf.tm_hour,
-               tm_buf.tm_min,
-               tm_buf.tm_sec);
-      fclose(fo);
-      pulseCnt++;
+      if ( now > (last_t + 3)) // debounce interrupts
+      {
+         struct tm tm_buf;
+         localtime_r(&now, &tm_buf);
+         FILE *fo = fopen("gasometerTimestamps.csv", "a");
+         fprintf( fo, "%ld,%02d.%02d.%04d_%02d:%02d:%02d\n",
+                  now,
+                  tm_buf.tm_mday,
+                  tm_buf.tm_mon + 1,
+                  tm_buf.tm_year + 1900,
+                  tm_buf.tm_hour,
+                  tm_buf.tm_min,
+                  tm_buf.tm_sec);
+         fclose(fo);
+         pulseCnt++;
+      }
+      last_t = now;
    }
 }
 
@@ -54,7 +59,7 @@ int main (int argc, char *argv[])
 
    while (1)
    {
-      gpioDelay(3600*1000); //1h
+      gpioSleep(PI_TIME_RELATIVE, 60*60, 0); //1h
       if ( pulseCnt > 0 ) healthCheck();
       pulseCnt = 0;
    }

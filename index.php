@@ -6,12 +6,13 @@
 <html>
   <head>
     <meta http-equiv="refresh" content="123">
-    <title>Gasverbrauch</title>
+    <title>Energieverbrauch</title>
   </head>
   <body>
     <img src=gasometerToday.png>
-    <h1>gesamter Gasverbrauch</h1>
+    <img src=todaysPower.png>
     <img src=gasometer.png>
+    <img src=daily.png>
   </body>
 </html>
 
