@@ -97,8 +97,9 @@ ofAvg    = ((today * 100) / power_mean)
 
 set title sprintf("Total Energy Consumption (%.1f%% Strom, %.1f%% Gas)\ntoday %.1f%% overMin, %.1f%% underMax and %.1f%% ofAvg (%.1f%% Strom, %.1f%% Gas)", total_strom_percent, total_gas_percent, aboveMin, belowMax, ofAvg, todayPercentStrom, todayPercentGas)
 
+averageHouseholdKWa = 17678000
 expectedKWa = ((total_gas_kWh + total_strom_kWh)*365)/numberOfDays
-percentExpectedKWa = (expectedKWa * 100) / 17678000
+percentExpectedKWa = (expectedKWa * 100) / averageHouseholdKWa
 set label sprintf("FCST: %.1f MWh/a\n%.f%% of avg household", expectedKWa/1000/1000, percentExpectedKWa) left at graph 0.02, graph 0.955
 set label sprintf("%.1f MWh/a", first_kWha/1000/1000) left at graph 0.001, first strom_max/1000 offset 0,0.4
 set label sprintf("%.1f MWh/a", last_kWha/1000/1000) right at graph 0.999, first strom_max/1000 offset 0,0.4
@@ -110,6 +111,7 @@ set style fill transparent solid 0.25
 
 plot today/1000 title sprintf("today %.1f kWh (%.f W)", (today/1000), (today/24)) with lines dashtype 2 lw 1 lc rgb "black", \
      power_mean/1000 title sprintf("avg. %.1f kWh (%.f W)", (power_mean/1000), (power_mean/24)) with lines lw 2 lc rgb "red", \
+     averageHouseholdKWa/365/1000 notitle with lines dashtype 2 lw 1 lc rgb "green", \
      messwerte using 1:($5/1000) notitle lw 3 lc "dark-blue" with histeps, \
      messwerte using 1:($4/1000) notitle lw 1 lc "blue" with histeps, \
      messwerte using 1:(avg_n($5/1000)) with lines lw 2 lc rgb "dark-red" notitle
