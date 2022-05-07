@@ -12,6 +12,11 @@ set timefmt "%H:%M:%S"
 set grid ytics lc rgb "black" lw 1 lt 0 front
 set grid xtics lc rgb "black" lw 1 lt 0 front
 
+# brutto ENERGIE KOSTEN laut Tarif 2022
+ctkWh = 27.98
+grundPreis = 104.72 
+
+# Auswertung
 messwerte="< cat todaysPowerData.csv"
 now = system("tail -n 1 todaysPowerData.csv | cut -d, -f 2") + 0.0
 
@@ -32,9 +37,10 @@ set label sprintf("%.fW", Y_min) center at first X_min,Y_min point pt 7 ps 1 off
 set label sprintf("%.fW", Y_max) center at first X_max,Y_max point pt 7 ps 1 offset 0,0.4
 
 # set title with accumulated electrical energie consumption so far
-sofarkWh= system("smartpick/smartpick.py smartpi.local") + 0.0
-set title sprintf("today %.2f kWh electrical energy so far", sofarkWh)
+sofarkWh = system("smartpick/smartpick.py smartpi.local") + 0.0
+sofarEURO = (grundPreis / 365) + ((sofarkWh * ctkWh) / 100.0) 
+set title sprintf("today %.2fkWh (%.2f€) electrical energy", sofarkWh, sofarEURO)
 
-plot now title sprintf("now %.f W", now) with lines dashtype 2 lw 1 lc rgb "black", \
+plot now title sprintf("now %.fW", now) with lines dashtype 2 lw 1 lc rgb "black", \
           messwerte using 1:2 notitle lw 2 lc "blue" with lines
 

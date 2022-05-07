@@ -3,6 +3,7 @@
   echo "REFRESH returned $retval and says: ";
   print_r($output);
 ?>
+
 <html>
   <head>
     <meta http-equiv="refresh" content="123">
